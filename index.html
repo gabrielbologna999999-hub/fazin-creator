@@ -23,13 +23,16 @@ textarea{min-height:110px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 button{border:0;font-size:16px;font-weight:bold;cursor:pointer}
 .primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:14px 18px;border-radius:14px}
+.primary:disabled{opacity:.6;cursor:not-allowed}
 .wide{width:100%;margin-top:20px}
 .ghost{background:#131d31;color:#fff;border:1px solid var(--border);padding:11px 14px;border-radius:12px}
 .hidden{display:none}
 .card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:17px;margin:13px 0}
 .card h3{margin:0 0 8px;color:#ad9fff}
-.card p{white-space:pre-line;line-height:1.6;margin:0}
+.card pre{white-space:pre-wrap;word-wrap:break-word;line-height:1.65;margin:0;font-family:Arial,Helvetica,sans-serif;color:#f5f7fb;font-size:16px}
 .result-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.status{margin-top:14px;color:#b8c5da;text-align:center}
+.error{color:#ff9a9a}
 footer{text-align:center;color:#78859b;padding:30px}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.result-head{align-items:flex-start;flex-direction:column}}
 </style>
@@ -39,9 +42,9 @@ footer{text-align:center;color:#78859b;padding:30px}
 
 <main class="container">
 <section class="hero">
-<span class="badge">Criador de conteúdo</span>
+<span class="badge">Criador de conteúdo com IA</span>
 <h1>Crie vídeos que prendem atenção em segundos.</h1>
-<p>Gere ideias, roteiros, títulos, legendas, hashtags e cenas para TikTok, Reels e Shorts.</p>
+<p>Gere ideias, roteiros, títulos, legendas, hashtags e cenas para TikTok, Reels e Shorts usando inteligência artificial.</p>
 <button class="primary" onclick="document.getElementById('creator').scrollIntoView()">Criar conteúdo</button>
 </section>
 
@@ -54,135 +57,126 @@ footer{text-align:center;color:#78859b;padding:30px}
 <div>
 <label>Categoria</label>
 <select id="category">
-<option>Terror</option><option>Curiosidades</option><option>História</option><option>Humor</option><option>Motivação</option><option>Negócios</option>
+<option>Terror</option>
+<option>Curiosidades</option>
+<option>História</option>
+<option>Humor</option>
+<option>Motivação</option>
+<option>Negócios</option>
 </select>
 </div>
+
 <div>
 <label>Plataforma</label>
 <select id="platform">
-<option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option>
+<option>TikTok</option>
+<option>Instagram Reels</option>
+<option>YouTube Shorts</option>
 </select>
 </div>
+
 <div>
 <label>Duração</label>
 <select id="duration">
-<option value="30">30 segundos</option><option value="45">45 segundos</option><option value="60">60 segundos</option>
+<option value="30 segundos">30 segundos</option>
+<option value="45 segundos">45 segundos</option>
+<option value="60 segundos">60 segundos</option>
 </select>
 </div>
 </div>
-<button class="primary wide" onclick="generateContent()">Gerar conteúdo</button>
+
+<button class="primary wide" id="generateBtn" onclick="generateContent()">Gerar conteúdo com IA</button>
+<div id="status" class="status hidden">A IA está criando seu conteúdo...</div>
 </section>
 
 <section id="result" class="panel hidden">
-<div class="result-head"><h2>Conteúdo pronto</h2><button class="ghost" onclick="copyAll()">Copiar tudo</button></div>
-<div class="card"><h3>Título</h3><p id="titleOut"></p></div>
-<div class="card"><h3>Gancho</h3><p id="hookOut"></p></div>
-<div class="card"><h3>Roteiro</h3><p id="scriptOut"></p></div>
-<div class="card"><h3>Cenas</h3><p id="scenesOut"></p></div>
-<div class="card"><h3>Legenda</h3><p id="captionOut"></p></div>
-<div class="card"><h3>Hashtags</h3><p id="hashtagsOut"></p></div>
+<div class="result-head">
+<h2>Conteúdo criado pela IA</h2>
+<button class="ghost" onclick="copyAll()">Copiar tudo</button>
+</div>
+
+<div class="card">
+<h3>Resultado</h3>
+<pre id="aiOutput"></pre>
+</div>
+
+<button class="primary wide" onclick="generateContent()">Gerar novamente</button>
 </section>
 </main>
 
-<footer>FaziN Creator • Protótipo gratuito</footer>
+<footer>FaziN Creator • Inteligência Artificial</footer>
 
 <script>
-const templates={
-"Terror":{
-titles:["Você atenderia essa ligação?","A história que vai te fazer olhar para trás","Ele nunca deveria ter aberto aquela porta"],
-hooks:["Se isso acontecesse com você durante a madrugada, o que faria?","Essa história começa normalmente, mas o final é assustador.","O que aconteceu naquela noite nunca foi explicado."]
-},
-"Curiosidades":{
-titles:["Você provavelmente não sabia disso","3 fatos que parecem mentira","O fato mais estranho que você verá hoje"],
-hooks:["Isso parece mentira, mas é real.","Pouquíssimas pessoas sabem disso.","O último detalhe é o mais impressionante."]
-},
-"História":{
-titles:["A história que quase ninguém conhece","O acontecimento que mudou tudo","Isso realmente aconteceu"],
-hooks:["Pouca gente conhece essa parte da história.","Uma única decisão mudou tudo.","O que aconteceu naquele dia entrou para a história."]
-},
-"Humor":{
-titles:["Todo mundo conhece alguém assim","Quando tudo dá errado","Isso sempre acontece"],
-hooks:["Se isso nunca aconteceu com você, você está com sorte.","Eu só queria fazer uma coisa simples...","O pior é que sempre acontece na hora errada."]
-},
-"Motivação":{
-titles:["Você precisava ouvir isso hoje","Não desista agora","Um minuto que pode mudar seu dia"],
-hooks:["Talvez você precisasse ouvir isso hoje.","Antes de desistir, escute isso.","Continue, mesmo que esteja indo devagar."]
-},
-"Negócios":{
-titles:["Um erro que faz você perder clientes","Como vender melhor","Uma mudança simples para vender mais"],
-hooks:["Se você vende pela internet, preste atenção.","Muita gente perde venda nesse detalhe.","Essa mudança simples pode melhorar suas vendas."]
-}
-};
+const API_URL = "https://fazin-creator-api.gabrielbologna999999.workers.dev/";
 
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
+async function generateContent() {
+  const topic = document.getElementById("topic").value.trim();
+  const category = document.getElementById("category").value;
+  const platform = document.getElementById("platform").value;
+  const duration = document.getElementById("duration").value;
+  const button = document.getElementById("generateBtn");
+  const status = document.getElementById("status");
+  const result = document.getElementById("result");
+  const output = document.getElementById("aiOutput");
 
-function generateContent(){
-const topic=document.getElementById("topic").value.trim();
-const category=document.getElementById("category").value;
-const platform=document.getElementById("platform").value;
-const duration=parseInt(document.getElementById("duration").value);
+  if (!topic) {
+    alert("Digite primeiro o assunto do vídeo.");
+    return;
+  }
 
-if(!topic){alert("Digite primeiro o assunto do vídeo.");return}
+  button.disabled = true;
+  button.textContent = "Criando...";
+  status.classList.remove("hidden");
+  status.classList.remove("error");
+  status.textContent = "A IA está criando seu conteúdo...";
+  result.classList.add("hidden");
 
-const t=templates[category];
-const title=pick(t.titles)+" — "+topic;
-const hook=pick(t.hooks);
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        tema: topic,
+        categoria: category,
+        plataforma: platform,
+        duracao: duration
+      })
+    });
 
-let middle="";
-if(category==="Terror"){
-middle=`Imagine a seguinte situação: ${topic}. No começo, tudo parece normal. Só que pequenos detalhes começam a ficar estranhos. A cada momento, a pessoa percebe que alguma coisa está errada, mas já é tarde demais para simplesmente ignorar.`;
-}else if(category==="Curiosidades"){
-middle=`O assunto é: ${topic}. Primeiro, mostre o fato principal de forma rápida. Depois explique por que isso é tão incomum e apresente um detalhe que a maioria das pessoas não conhece.`;
-}else{
-middle=`Hoje o assunto é: ${topic}. Comece apresentando o problema ou situação principal. Depois explique o contexto de forma simples e rápida, guardando o ponto mais interessante para o final.`;
-}
+    const data = await response.json();
 
-const script=`${hook}
+    if (!response.ok || !data.sucesso) {
+      throw new Error(data.error || "Não foi possível gerar o conteúdo.");
+    }
 
-${middle}
-
-Para terminar, revele o detalhe mais forte da história e faça uma pergunta para gerar comentários:
-
-"E você, já sabia disso? O que acha que aconteceu?"`;
-
-const end=Math.max(duration-5,20);
-const scenes=`Cena 1 (0–3s): gancho escrito grande na tela.
-Cena 2 (3–10s): imagem ou vídeo que represente "${topic}".
-Cena 3 (10–20s): narração explicando o contexto.
-Cena 4 (20–${end}s): parte mais importante ou revelação.
-Cena 5 (final): pergunta para comentários e chamada para seguir o perfil.`;
-
-const tags={
-"Terror":"#terror #historiasdeterror #misterio #medo",
-"Curiosidades":"#curiosidades #voceSabia #fatos #interessante",
-"História":"#historia #curiosidades #aprendizado #documentario",
-"Humor":"#humor #comedia #engracado #viral",
-"Motivação":"#motivacao #foco #disciplina #mentalidade",
-"Negócios":"#negocios #vendas #empreendedorismo #marketing"
-};
-
-document.getElementById("titleOut").textContent=title;
-document.getElementById("hookOut").textContent=hook;
-document.getElementById("scriptOut").textContent=script;
-document.getElementById("scenesOut").textContent=scenes;
-document.getElementById("captionOut").textContent=`${topic} 👀
-
-Você já conhecia isso? Comenta aqui e segue para ver mais conteúdos assim.`;
-document.getElementById("hashtagsOut").textContent=tags[category]+" #"+platform.replace(/\s/g,"");
-document.getElementById("result").classList.remove("hidden");
-document.getElementById("result").scrollIntoView({behavior:"smooth"});
+    output.textContent = data.conteudo;
+    result.classList.remove("hidden");
+    status.classList.add("hidden");
+    result.scrollIntoView({behavior:"smooth"});
+  } catch (error) {
+    status.classList.remove("hidden");
+    status.classList.add("error");
+    status.textContent = "Erro ao gerar conteúdo: " + error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "Gerar conteúdo com IA";
+  }
 }
 
-function copyAll(){
-const ids=["titleOut","hookOut","scriptOut","scenesOut","captionOut","hashtagsOut"];
-const labels=["TÍTULO","GANCHO","ROTEIRO","CENAS","LEGENDA","HASHTAGS"];
-let text="";
-ids.forEach((id,i)=>{text+=labels[i]+"\n"+document.getElementById(id).textContent+"\n\n"});
-if(navigator.clipboard&&navigator.clipboard.writeText){
-navigator.clipboard.writeText(text).then(()=>alert("Conteúdo copiado!"));
-}else{
-const area=document.createElement("textarea");area.value=text;document.body.appendChild(area);area.select();document.execCommand("copy");area.remove();alert("Conteúdo copiado!");
-}
+async function copyAll() {
+  const text = document.getElementById("aiOutput").textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    alert("Conteúdo copiado!");
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    alert("Conteúdo copiado!");
+  }
 }
 </script>
 </body>
