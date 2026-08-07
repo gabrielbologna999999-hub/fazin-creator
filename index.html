@@ -7,100 +7,168 @@
 <style>
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-:root{--bg:#070b14;--panel:#0f1728;--card:#121d33;--text:#f5f7fb;--muted:#9aa7bd;--accent:#7c5cff;--accent2:#18b6ff;--border:#21304d}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#101a35 0,#070b14 45%);color:var(--text)}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px;background:#0a1020;border-bottom:1px solid var(--border)}
-.brand{font-weight:900;font-size:23px}.brand span{color:#9b87ff}
-.container{width:min(960px,92%);margin:auto}
+:root{
+  --bg:#070b14;--panel:#0f1728;--card:#121d33;--text:#f5f7fb;
+  --muted:#9aa7bd;--accent:#7c5cff;--accent2:#18b6ff;--border:#21304d;
+  --success:#72e6a6;--danger:#ff9a9a
+}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;
+  background:radial-gradient(circle at top,#101a35 0,#070b14 45%);
+  color:var(--text)
+}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px;background:rgba(10,16,32,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border)
+}
+.brand{font-weight:900;font-size:23px}
+.brand span{color:#9b87ff}
+.container{width:min(1000px,92%);margin:auto}
 .hero{padding:55px 0 25px}
-.badge{display:inline-block;padding:8px 12px;border:1px solid #6959cf;border-radius:999px;color:#c7bdff;background:#171532}
-.hero h1{font-size:clamp(37px,9vw,68px);line-height:1;margin:18px 0}
-.hero p{color:var(--muted);font-size:18px;line-height:1.55}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:22px;padding:20px;margin:22px 0}
+.badge{
+  display:inline-block;padding:8px 12px;border:1px solid #6959cf;
+  border-radius:999px;color:#c7bdff;background:#171532
+}
+.hero h1{font-size:clamp(38px,8vw,68px);line-height:1;margin:18px 0}
+.hero p{color:var(--muted);font-size:18px;line-height:1.55;max-width:760px}
+.panel{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:22px;padding:20px;margin:22px 0
+}
 label{display:block;font-weight:bold;margin:15px 0 7px}
-textarea,select{width:100%;padding:14px;border-radius:13px;border:1px solid var(--border);background:#09111f;color:white;font-size:16px}
-textarea{min-height:110px}
+textarea,select{
+  width:100%;padding:14px;border-radius:13px;border:1px solid var(--border);
+  background:#09111f;color:white;font-size:16px
+}
+textarea{min-height:110px;resize:vertical}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-button{border:0;font-size:16px;font-weight:bold;cursor:pointer}
-.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:14px 18px;border-radius:14px}
+button{border:0;font-size:15px;font-weight:bold;cursor:pointer}
+.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;padding:14px 18px;border-radius:14px
+}
 .primary:disabled{opacity:.6;cursor:not-allowed}
 .wide{width:100%;margin-top:20px}
-.ghost{background:#131d31;color:#fff;border:1px solid var(--border);padding:11px 14px;border-radius:12px}
+.ghost{
+  background:#131d31;color:#fff;border:1px solid var(--border);
+  padding:10px 13px;border-radius:12px
+}
 .hidden{display:none}
-.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:17px;margin:13px 0}
-.card h3{margin:0 0 8px;color:#ad9fff}
-.card pre{white-space:pre-wrap;word-wrap:break-word;line-height:1.65;margin:0;font-family:Arial,Helvetica,sans-serif;color:#f5f7fb;font-size:16px}
-.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .status{margin-top:14px;color:#b8c5da;text-align:center}
-.error{color:#ff9a9a}
+.status.ok{color:var(--success)}
+.status.error{color:var(--danger)}
+.result-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  margin-bottom:12px
+}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.result-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px
+}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:17px;min-width:0
+}
+.card.full{grid-column:1/-1}
+.card-head{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+  margin-bottom:10px
+}
+.card h3{margin:0;color:#ad9fff}
+.card .content{
+  white-space:pre-wrap;word-break:break-word;line-height:1.65;
+  color:#f5f7fb;font-size:16px
+}
+.small{font-size:13px;color:var(--muted)}
 footer{text-align:center;color:#78859b;padding:30px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.result-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:760px){
+  .grid,.result-grid{grid-template-columns:1fr}
+  .result-head{align-items:flex-start;flex-direction:column}
+  .card.full{grid-column:auto}
+}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="brand">FaziN <span>Creator</span></div></header>
+
+<header class="topbar">
+  <div class="brand">FaziN <span>Creator</span></div>
+  <span class="small">IA para TikTok • Reels • Shorts</span>
+</header>
 
 <main class="container">
 <section class="hero">
-<span class="badge">Criador de conteúdo com IA</span>
-<h1>Crie vídeos que prendem atenção em segundos.</h1>
-<p>Gere ideias, roteiros, títulos, legendas, hashtags e cenas para TikTok, Reels e Shorts usando inteligência artificial.</p>
-<button class="primary" onclick="document.getElementById('creator').scrollIntoView()">Criar conteúdo</button>
+  <span class="badge">Criador de conteúdo com IA</span>
+  <h1>Crie vídeos que prendem atenção em segundos.</h1>
+  <p>Digite um tema e receba um pacote pronto para criação: título, gancho, roteiro, narração, ideias de imagens, legenda, hashtags e CTA.</p>
+  <button class="primary" onclick="document.getElementById('creator').scrollIntoView()">Criar conteúdo</button>
 </section>
 
 <section id="creator" class="panel">
-<h2>Novo conteúdo</h2>
-<label>Sobre o que será o vídeo?</label>
-<textarea id="topic" placeholder="Ex.: uma história assustadora sobre uma ligação às 3 da manhã"></textarea>
+  <h2>Novo conteúdo</h2>
 
-<div class="grid">
-<div>
-<label>Categoria</label>
-<select id="category">
-<option>Terror</option>
-<option>Curiosidades</option>
-<option>História</option>
-<option>Humor</option>
-<option>Motivação</option>
-<option>Negócios</option>
-</select>
-</div>
+  <label>Sobre o que será o vídeo?</label>
+  <textarea id="topic" placeholder="Ex.: uma história assustadora sobre uma ligação às 3 da manhã"></textarea>
 
-<div>
-<label>Plataforma</label>
-<select id="platform">
-<option>TikTok</option>
-<option>Instagram Reels</option>
-<option>YouTube Shorts</option>
-</select>
-</div>
+  <div class="grid">
+    <div>
+      <label>Categoria</label>
+      <select id="category">
+        <option>Terror</option>
+        <option>Curiosidades</option>
+        <option>História</option>
+        <option>Humor</option>
+        <option>Motivação</option>
+        <option>Negócios</option>
+      </select>
+    </div>
 
-<div>
-<label>Duração</label>
-<select id="duration">
-<option value="30 segundos">30 segundos</option>
-<option value="45 segundos">45 segundos</option>
-<option value="60 segundos">60 segundos</option>
-</select>
-</div>
-</div>
+    <div>
+      <label>Plataforma</label>
+      <select id="platform">
+        <option>TikTok</option>
+        <option>Instagram Reels</option>
+        <option>YouTube Shorts</option>
+      </select>
+    </div>
 
-<button class="primary wide" id="generateBtn" onclick="generateContent()">Gerar conteúdo com IA</button>
-<div id="status" class="status hidden">A IA está criando seu conteúdo...</div>
+    <div>
+      <label>Duração</label>
+      <select id="duration">
+        <option value="30 segundos">30 segundos</option>
+        <option value="45 segundos">45 segundos</option>
+        <option value="60 segundos">60 segundos</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="primary wide" id="generateBtn" onclick="generateContent()">Gerar conteúdo com IA</button>
+  <div id="status" class="status hidden">A IA está criando seu conteúdo...</div>
 </section>
 
 <section id="result" class="panel hidden">
-<div class="result-head">
-<h2>Conteúdo criado pela IA</h2>
-<button class="ghost" onclick="copyAll()">Copiar tudo</button>
-</div>
+  <div class="result-head">
+    <div>
+      <h2 style="margin:0">Conteúdo criado pela IA</h2>
+      <div class="small">Você pode copiar cada parte separadamente ou tudo de uma vez.</div>
+    </div>
+    <div class="actions">
+      <button class="ghost" onclick="copyAll()">Copiar tudo</button>
+      <button class="ghost" onclick="generateContent()">Gerar novamente</button>
+    </div>
+  </div>
 
-<div class="card">
-<h3>Resultado</h3>
-<pre id="aiOutput"></pre>
-</div>
+  <div id="structuredResults" class="result-grid"></div>
 
-<button class="primary wide" onclick="generateContent()">Gerar novamente</button>
+  <div class="card full" style="margin-top:14px">
+    <div class="card-head">
+      <h3>Resultado completo</h3>
+      <button class="ghost" onclick="copyText('rawOutput')">Copiar</button>
+    </div>
+    <div id="rawOutput" class="content"></div>
+  </div>
 </section>
 </main>
 
@@ -108,6 +176,129 @@ footer{text-align:center;color:#78859b;padding:30px}
 
 <script>
 const API_URL = "https://fazin-creator-api.gabrielbologna999999.workers.dev/";
+
+const SECTION_DEFS = [
+  {key:"titulo", label:"🎬 Título", names:["titulo","título"]},
+  {key:"gancho", label:"⚡ Gancho", names:["gancho","gancho forte"]},
+  {key:"roteiro", label:"📝 Roteiro", names:["roteiro","roteiro completo"]},
+  {key:"narracao", label:"🎙️ Narração", names:["narracao","narração"]},
+  {key:"imagens", label:"🖼️ Prompts / Ideias de imagens", names:["prompts de imagens","prompt de imagem","prompts","ideia de imagem","ideia de imagem ou thumbnail","thumbnail","imagens"]},
+  {key:"legenda", label:"✍️ Legenda", names:["legenda","legenda pronta para postagem"]},
+  {key:"hashtags", label:"#️⃣ Hashtags", names:["hashtags","hashtag"]},
+  {key:"cta", label:"📣 CTA", names:["cta","chamada para ação","chamada para acao"]}
+];
+
+function normalizeHeading(text) {
+  return text
+    .replace(/\*/g,"")
+    .replace(/^[#\-\s]+/g,"")
+    .replace(/^\d+\.\s*/,"")
+    .trim()
+    .toLowerCase();
+}
+
+function parseSections(text) {
+  const lines = text.replace(/\r/g,"").split("\n");
+  const found = {};
+  let current = null;
+
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    const clean = line.trim();
+    if (!clean) {
+      if (current) found[current] += "\n";
+      continue;
+    }
+
+    let matched = null;
+    let inlineValue = "";
+
+    for (const def of SECTION_DEFS) {
+      for (const name of def.names) {
+        const esc = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const re = new RegExp(
+          "^(?:\\*\\*)?(?:\\d+\\.\\s*)?" + esc + "(?:\\*\\*)?\\s*:\\s*(.*)$",
+          "i"
+        );
+        const m = clean.match(re);
+        if (m) {
+          matched = def.key;
+          inlineValue = (m[1] || "").trim();
+          break;
+        }
+      }
+      if (matched) break;
+    }
+
+    if (!matched) {
+      const h = normalizeHeading(clean.replace(/:$/,""));
+      for (const def of SECTION_DEFS) {
+        if (def.names.some(n => h === n)) {
+          matched = def.key;
+          inlineValue = "";
+          break;
+        }
+      }
+    }
+
+    if (matched) {
+      current = matched;
+      if (!found[current]) found[current] = "";
+      if (inlineValue) found[current] += inlineValue + "\n";
+    } else if (current) {
+      found[current] += clean + "\n";
+    }
+  }
+
+  for (const k of Object.keys(found)) {
+    found[k] = found[k].trim();
+  }
+  return found;
+}
+
+function renderStructured(text) {
+  const parsed = parseSections(text);
+  const container = document.getElementById("structuredResults");
+  container.innerHTML = "";
+
+  let count = 0;
+  for (const def of SECTION_DEFS) {
+    const value = parsed[def.key];
+    if (!value) continue;
+    count++;
+
+    const card = document.createElement("div");
+    card.className = "card" + ((def.key === "roteiro" || def.key === "narracao") ? " full" : "");
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+
+    const title = document.createElement("h3");
+    title.textContent = def.label;
+
+    const copy = document.createElement("button");
+    copy.className = "ghost";
+    copy.textContent = "Copiar";
+    copy.onclick = () => copyValue(value);
+
+    const body = document.createElement("div");
+    body.className = "content";
+    body.textContent = value;
+
+    head.appendChild(title);
+    head.appendChild(copy);
+    card.appendChild(head);
+    card.appendChild(body);
+    container.appendChild(card);
+  }
+
+  if (count === 0) {
+    const info = document.createElement("div");
+    info.className = "card full";
+    info.innerHTML = '<div class="content">A IA respondeu normalmente, mas não separou o texto em títulos reconhecíveis. O conteúdo completo está logo abaixo.</div>';
+    container.appendChild(info);
+  }
+}
 
 async function generateContent() {
   const topic = document.getElementById("topic").value.trim();
@@ -117,7 +308,6 @@ async function generateContent() {
   const button = document.getElementById("generateBtn");
   const status = document.getElementById("status");
   const result = document.getElementById("result");
-  const output = document.getElementById("aiOutput");
 
   if (!topic) {
     alert("Digite primeiro o assunto do vídeo.");
@@ -126,15 +316,14 @@ async function generateContent() {
 
   button.disabled = true;
   button.textContent = "Criando...";
-  status.classList.remove("hidden");
-  status.classList.remove("error");
+  status.className = "status";
   status.textContent = "A IA está criando seu conteúdo...";
   result.classList.add("hidden");
 
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
         tema: topic,
         categoria: category,
@@ -149,13 +338,17 @@ async function generateContent() {
       throw new Error(data.error || "Não foi possível gerar o conteúdo.");
     }
 
-    output.textContent = data.conteudo;
+    const text = String(data.conteudo || "");
+    document.getElementById("rawOutput").textContent = text;
+    renderStructured(text);
+
     result.classList.remove("hidden");
-    status.classList.add("hidden");
+    status.className = "status ok";
+    status.textContent = "Conteúdo criado com sucesso!";
     result.scrollIntoView({behavior:"smooth"});
+
   } catch (error) {
-    status.classList.remove("hidden");
-    status.classList.add("error");
+    status.className = "status error";
     status.textContent = "Erro ao gerar conteúdo: " + error.message;
   } finally {
     button.disabled = false;
@@ -163,11 +356,10 @@ async function generateContent() {
   }
 }
 
-async function copyAll() {
-  const text = document.getElementById("aiOutput").textContent;
+async function copyValue(text) {
   try {
     await navigator.clipboard.writeText(text);
-    alert("Conteúdo copiado!");
+    alert("Copiado!");
   } catch {
     const area = document.createElement("textarea");
     area.value = text;
@@ -175,8 +367,16 @@ async function copyAll() {
     area.select();
     document.execCommand("copy");
     area.remove();
-    alert("Conteúdo copiado!");
+    alert("Copiado!");
   }
+}
+
+function copyText(id) {
+  copyValue(document.getElementById(id).textContent);
+}
+
+function copyAll() {
+  copyText("rawOutput");
 }
 </script>
 </body>
