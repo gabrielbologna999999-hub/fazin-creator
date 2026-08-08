@@ -289,6 +289,52 @@ function renderStructured(text) {
     head.appendChild(copy);
     card.appendChild(head);
     card.appendChild(body);
+    if (def.key === "prompts") {
+  const gerarImagem = document.createElement("button");
+  gerarImagem.className = "ghost";
+  gerarImagem.textContent = "🎨 Gerar imagem com IA";
+
+  gerarImagem.onclick = async () => {
+    gerarImagem.disabled = true;
+    gerarImagem.textContent = "⏳ Gerando imagem...";
+
+    try {
+      const resposta = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          acao: "gerar_imagem",
+          prompt: value
+        })
+      });
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok || !dados.sucesso) {
+        throw new Error(dados.erro || "Erro ao gerar imagem");
+      }
+
+      const img = document.createElement("img");
+      img.src = dados.imagem;
+      img.style.width = "100%";
+      img.style.marginTop = "15px";
+      img.style.borderRadius = "12px";
+
+      card.appendChild(img);
+
+      gerarImagem.textContent = "✅ Imagem gerada";
+    } catch (erro) {
+      gerarImagem.textContent = "❌ Erro ao gerar imagem";
+      console.error(erro);
+    } finally {
+      gerarImagem.disabled = false;
+    }
+  };
+
+  card.appendChild(gerarImagem);
+}
     container.appendChild(card);
   }
 
